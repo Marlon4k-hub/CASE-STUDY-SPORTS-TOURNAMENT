@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sports Tournament Management System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            font-family: Arial;
+            background-color: #f4f6fb;
+            color: #222;
+        }
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            height: 100vh;
+            background-color: #171c70;
+            color: white;
+            position: fixed;
+            padding: 20px 12px;
+        }
+        .logo {
+            text-align: center;
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .nav-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 7px;
+            background: none;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .nav-button:hover,
+        .nav-button.active {
+            background-color: #3979ed;
+        }
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 220px;
+            padding: 20px;
+        }
+        .topbar {
+            background-color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .topbar h2 {
+            margin: 0;
+            color: #171c70;
+            font-size: 20px;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .welcome,
+        .panel {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .welcome h1,
+        .panel h3 {
+            color: #171c70;
+        }
+        /* DASHBOARD */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+        }
+        .card {
+            background-color: white;
+            padding: 22px 10px;
+            border: 1px solid #e1e7f3;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .card:hover {
+            background-color: #eaf1ff;
+        }
+        .card h3 {
+            font-size: 14px;
+            color: #171c70;
+        }
+        /* INPUTS AND BUTTONS */
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 10px;
+            border: 1px solid #d5d9e3;
+            border-radius: 5px;
+            min-width: 100px;
+            flex: 1;
+        }
+        .btn {
+            padding: 9px 13px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .blue {
+            background-color: #3979ed;
+            color: white;
+        }
+        .purple {
+            background-color: #e8ddff;
+            color: #483080;
+        }
+        .red {
+            background-color: #ffdddd;
+            color: #c82333;
+        }
+        /* TABLE */
+        .table-box {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f4fb;
+        }
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+        .actions button {
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+        .empty {
+            text-align: center;
+            color: #777;
+            padding: 15px;
+        }
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 155px;
+            }
+            .main {
+                margin-left: 155px;
+                padding: 10px;
+            }
+            .nav-button {
+                font-size: 11px;
+                padding: 9px 5px;
+            }
+            .logo {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            SPORTS TOURNAMENT
+            <br>
+            MANAGEMENT SYSTEM
+        </div>
+        <button class="nav-button active" onclick="showPage('dashboard', this)">
+            Dashboard
+        </button>
+        <button class="nav-button" onclick="showPage('teams', this)">
+            Manage Teams
+        </button>
+        <button class="nav-button" onclick="showPage('players', this)">
+            Manage Players
+        </button>
+        <button class="nav-button" onclick="showPage('sports', this)">
+            Sports Categories
+        </button>
+        <button class="nav-button" onclick="showPage('schedules', this)">
+            Manage Schedules
+        </button>
+        <button class="nav-button" onclick="showPage('scores', this)">
+            Manage Scores
+        </button>
+        <button class="nav-button" onclick="showPage('standings', this)">
+            Manage Standings
+        </button>
+        <button class="nav-button" onclick="showPage('results', this)">
+            Tournament Results
+        </button>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <div class="topbar">
+            <h2 id="pageTitle">Dashboard</h2>
+        </div>
+        <!-- DASHBOARD -->
+        <div class="page active" id="dashboard">
+            <div class="welcome">
+                <h1>Sports Tournament Management System</h1>
+                <p>Manage your tournament easily and efficiently!</p>
+            </div>
+            <div class="cards">
+                <div class="card" onclick="openModule('teams')">
+                    <h3>Manage Teams</h3>
+                </div>
+                <div class="card" onclick="openModule('players')">
+                    <h3>Manage Players</h3>
+                </div>
+                <div class="card" onclick="openModule('sports')">
+                    <h3>Sports Categories</h3>
+                </div>
+                <div class="card" onclick="openModule('schedules')">
+                    <h3>Manage Schedules</h3>
+                </div>
+                <div class="card" onclick="openModule('scores')">
+                    <h3>Manage Scores</h3>
+                </div>
+                <div class="card" onclick="openModule('standings')">
+                    <h3>Manage Standings</h3>
+                </div>
+                <div class="card" onclick="openModule('results')">
+                    <h3>Tournament Results</h3>
+                </div>
+            </div>
+        </div>
+        <!-- MANAGE TEAMS -->
+        <div class="page" id="teams">
+            <div class="panel">
+                <h3>Manage Teams</h3>
+                <div class="form">
+                    <input id="teams_name" placeholder="Team Name">
+                    <input id="teams_sports" placeholder="Sports">
+                    <input id="teams_coach" placeholder="Coach">
+                </div>
+                <button class="btn blue" onclick="addTeam()">Add Team</button>
+            </div>
+            <div class="panel">
+                <h3>Teams List</h3>
+                <div id="teamsTable" class="table-box"></div>
+                <br>
+                <input type="number" id="teamsIndex" placeholder="Enter index to delete">
+                <button class="btn red" onclick="deleteTeamByIndex()">Delete by Index</button>
+            </div>
+        </div>
+        <!-- MANAGE PLAYERS -->
+        <div class="page" id="players">
+            <div class="panel">
+                <h3>Manage Players</h3>
+                <div class="form">
+                    <input id="players_name" placeholder="Player Name">
+                    <input id="players_team" placeholder="Team">
+                    <input id="players_position" placeholder="Position">
+                </div>
+                <button class="btn blue" onclick="addPlayer()">Add Player</button>
+            </div>
+            <div class="panel">
+                <h3>Players List</h3>
+                <div id="playersTable" class="table-box"></div>
+                <br>
+                <input type="number" id="playersIndex" placeholder="Enter index to delete">
+                <button class="btn red" onclick="deletePlayerByIndex()">Delete by Index</button>
+            </div>
+        </div>
+        <!-- SPORTS CATEGORIES -->
+        <div class="page" id="sports">
+            <div class="panel">
+                <h3>Sports Categories</h3>
+                <div class="form">
+                    <input id="sports_category" placeholder="Category Name">
+                    <input id="sports_description" placeholder="Description">
+                </div>
+                <button class="btn blue" onclick="addSport()">Add Sport</button>
+            </div>
+            <div class="panel">
+                <h3>Sports List</h3>
+                <div id="sportsTable" class="table-box"></div>
+                <br>
+                <input type="number" id="sportsIndex" placeholder="Enter index to delete">
+                <button class="btn red" onclick="deleteSportByIndex()">Delete by Index</button>
+            </div>
+        </div>
+        <!-- PLACEHOLDER MODULES -->
+        <div class="page" id="schedules">
+            <div class="panel">
+                <h3>Manage Schedules</h3>
+                <p></p>
+            </div>
+        </div>
+        <div class="page" id="scores">
+            <div class="panel">
+                <h3>Manage Scores</h3>
+                <p></p>
+            </div>
+        </div>
+        <div class="page" id="standings">
+            <div class="panel">
+                <h3>Manage Standings</h3>
+                <p></p>
+            </div>
+        </div>
+        <div class="page" id="results">
+            <div class="panel">
+                <h3>Tournament Results</h3>
+                <p></p>
+            </div>
+        </div>
+    </div>
+    <!-- JAVASCRIPT -->
+    <script>
+        // ARRAYS
+        let teams = [];
+        let players = [];
+        let sports = [];
+        // SAVE DATA AS JSON
+        function saveData() {
+            let data = {
+                teams: teams,
+                players: players,
+                sports: sports
+            };
+            localStorage.setItem("tournamentData", JSON.stringify(data));
+        }
+        // LOAD SAVED DATA
+        function loadData() {
+            let data = localStorage.getItem("tournamentData");
+            if (data != null) {
+                data = JSON.parse(data);
+                teams = data.teams || [];
+                players = data.players || [];
+                sports = data.sports || [];
+            }
+        }
+        // ADD TEAM
+        function addTeam() {
+            let name = document.getElementById("teams_name").value.trim();
+            let sport = document.getElementById("teams_sports").value.trim();
+            let coach = document.getElementById("teams_coach").value.trim();
+            if (name == "" || sport == "" || coach == "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+            let team = {
+                name: name,
+                sports: sport,
+                coach: coach
+            };
+            teams.push(team);
+            saveData();
+            displayTeams();
+            document.getElementById("teams_name").value = "";
+            document.getElementById("teams_sports").value = "";
+            document.getElementById("teams_coach").value = "";
+            alert("Team added successfully!");
+        }
+        // DISPLAY TEAMS
+        function displayTeams() {
+            let output = "";
+            if (teams.length == 0) {
+                output = "<p class='empty'>No teams yet.</p>";
+            } else {
+                output = "<table><tr><th>ID</th><th>NAME</th><th>SPORTS</th><th>COACH</th><th>ACTIONS</th></tr>";
+                for (let i = 0; i < teams.length; i++) {
+                    output += "<tr>";
+                    output += "<td>" + (i + 1) + "</td>";
+                    output += "<td>" + teams[i].name + "</td>";
+                    output += "<td>" + teams[i].sports + "</td>";
+                    output += "<td>" + teams[i].coach + "</td>";
+                    output += "<td><button class='btn purple' onclick='editTeam(" + i + ")'>Edit</button> ";
+                    output += "<button class='btn red' onclick='deleteTeam(" + i + ")'>Delete</button></td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+            }
+            document.getElementById("teamsTable").innerHTML = output;
+        }
+        // EDIT TEAM
+        function editTeam(index) {
+            let name = prompt("Enter team name:", teams[index].name);
+            if (name == null || name.trim() == "") {
+                alert("Edit cancelled or name is empty.");
+                return;
+            }
+            let sport = prompt("Enter sport:", teams[index].sports);
+            if (sport == null || sport.trim() == "") {
+                alert("Edit cancelled or sport is empty.");
+                return;
+            }
+            let coach = prompt("Enter coach:", teams[index].coach);
+            if (coach == null || coach.trim() == "") {
+                alert("Edit cancelled or coach is empty.");
+                return;
+            }
+            teams[index].name = name.trim();
+            teams[index].sports = sport.trim();
+            teams[index].coach = coach.trim();
+            saveData();
+            displayTeams();
+            alert("Team updated successfully!");
+        }
+        // DELETE TEAM
+        function deleteTeam(index) {
+            if (confirm("Are you sure you want to delete this team?")) {
+                teams.splice(index, 1);
+                saveData();
+                displayTeams();
+                alert("Team deleted!");
+            }
+        }
+        // DELETE TEAM BY INDEX
+        function deleteTeamByIndex() {
+            let number = Number(document.getElementById("teamsIndex").value);
+            if (number < 1 || number > teams.length || document.getElementById("teamsIndex").value == "") {
+                alert("Please enter a valid index.");
+                return;
+            }
+            if (confirm("Delete team number " + number + "?")) {
+                teams.splice(number - 1, 1);
+                document.getElementById("teamsIndex").value = "";
+                saveData();
+                displayTeams();
+            }
+        }
+        // ADD PLAYER
+        function addPlayer() {
+            let name = document.getElementById("players_name").value.trim();
+            let team = document.getElementById("players_team").value.trim();
+            let position = document.getElementById("players_position").value.trim();
+            if (name == "" || team == "" || position == "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+            let player = {
+                name: name,
+                team: team,
+                position: position
+            };
+            players.push(player);
+            saveData();
+            displayPlayers();
+            document.getElementById("players_name").value = "";
+            document.getElementById("players_team").value = "";
+            document.getElementById("players_position").value = "";
+            alert("Player added successfully!");
+        }
+        // DISPLAY PLAYERS
+        function displayPlayers() {
+            let output = "";
+            if (players.length == 0) {
+                output = "<p class='empty'>No players yet.</p>";
+            } else {
+                output = "<table><tr><th>ID</th><th>NAME</th><th>TEAM</th><th>POSITION</th><th>ACTIONS</th></tr>";
+                for (let i = 0; i < players.length; i++) {
+                    output += "<tr>";
+                    output += "<td>" + (i + 1) + "</td>";
+                    output += "<td>" + players[i].name + "</td>";
+                    output += "<td>" + players[i].team + "</td>";
+                    output += "<td>" + players[i].position + "</td>";
+                    output += "<td><button class='btn purple' onclick='editPlayer(" + i + ")'>Edit</button> ";
+                    output += "<button class='btn red' onclick='deletePlayer(" + i + ")'>Delete</button></td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+            }
+            document.getElementById("playersTable").innerHTML = output;
+        }
+        // EDIT PLAYER
+        function editPlayer(index) {
+            let name = prompt("Enter player name:", players[index].name);
+            if (name == null || name.trim() == "") {
+                alert("Edit cancelled or name is empty.");
+                return;
+            }
+            let team = prompt("Enter team:", players[index].team);
+            if (team == null || team.trim() == "") {
+                alert("Edit cancelled or team is empty.");
+                return;
+            }
+            let position = prompt("Enter position:", players[index].position);
+            if (position == null || position.trim() == "") {
+                alert("Edit cancelled or position is empty.");
+                return;
+            }
+            players[index].name = name.trim();
+            players[index].team = team.trim();
+            players[index].position = position.trim();
+            saveData();
+            displayPlayers();
+            alert("Player updated successfully!");
+        }
+        // DELETE PLAYER
+        function deletePlayer(index) {
+            if (confirm("Are you sure you want to delete this player?")) {
+                players.splice(index, 1);
+                saveData();
+                displayPlayers();
+                alert("Player deleted!");
+            }
+        }
+        // DELETE PLAYER BY INDEX
+        function deletePlayerByIndex() {
+            let number = Number(document.getElementById("playersIndex").value);
+            if (number < 1 || number > players.length || document.getElementById("playersIndex").value == "") {
+                alert("Please enter a valid index.");
+                return;
+            }
+            if (confirm("Delete player number " + number + "?")) {
+                players.splice(number - 1, 1);
+                document.getElementById("playersIndex").value = "";
+                saveData();
+                displayPlayers();
+            }
+        }
+        // ADD SPORT
+        function addSport() {
+            let category = document.getElementById("sports_category").value.trim();
+            let description = document.getElementById("sports_description").value.trim();
+            if (category == "" || description == "") {
+                alert("Please fill in all fields.");
+                return;
+            }
+            let sport = {
+                category: category,
+                description: description
+            };
+            sports.push(sport);
+            saveData();
+            displaySports();
+            document.getElementById("sports_category").value = "";
+            document.getElementById("sports_description").value = "";
+            alert("Sport added successfully!");
+        }
+        // DISPLAY SPORTS
+        function displaySports() {
+            let output = "";
+            if (sports.length == 0) {
+                output = "<p class='empty'>No sports yet.</p>";
+            } else {
+                output = "<table><tr><th>ID</th><th>CATEGORY</th><th>DESCRIPTION</th><th>ACTIONS</th></tr>";
+                for (let i = 0; i < sports.length; i++) {
+                    output = "<tr>";
+                    output = "<td>" + (i + 1) + "</td>";
+                    output = "<td>" + sports[i].category + "</td>";
+                    output = "<td>" + sports[i].description + "</td>";
+                    output = "<td><button class='btn purple' onclick='editSport(" + i + ")'>Edit</button> ";
+                    output = "<button class='btn red' onclick='deleteSport(" + i + ")'>Delete</button></td>";
+                    output = "</tr>";
+                }
+                output += "</table>";
+            }
+            document.getElementById("sportsTable").innerHTML = output;
+        }
+        // EDIT SPORT
+        function editSport(index) {
+            let category = prompt("Enter category:", sports[index].category);
+            if (category == null || category.trim() == "") {
+                alert("Edit cancelled or category is empty.");
+                return;
+            }
+            let description = prompt("Enter description:", sports[index].description);
+            if (description == null || description.trim() == "") {
+                alert("Edit cancelled or description is empty.");
+                return;
+            }
+            sports[index].category = category.trim();
+            sports[index].description = description.trim();
+            saveData();
+            displaySports();
+            alert("Sport updated successfully!");
+        }
+        // DELETE SPORT
+        function deleteSport(index) {
+            if (confirm("Are you sure you want to delete this sport?")) {
+                sports.splice(index, 1);
+                saveData();
+                displaySports();
+                alert("Sport deleted!");
+            }
+        }
+        // DELETE SPORT BY INDEX
+        function deleteSportByIndex() {
+            let number = Number(document.getElementById("sportsIndex").value);
+            if (number < 1 || number > sports.length || document.getElementById("sportsIndex").value == "") {
+                alert("Please enter a valid index.");
+                return;
+            }
+            if (confirm("Delete sport number " + number + "?")) {
+                sports.splice(number - 1, 1);
+                document.getElementById("sportsIndex").value = "";
+                saveData();
+                displaySports();
+            }
+        }
+        // SWITCH PAGES
+        function showPage(page, button) {
+            let pages = document.getElementsByClassName("page");
+            for (let i = 0; i < pages.length; i++) {
+                pages[i].classList.remove("active");
+            }
+            document.getElementById(page).classList.add("active");
+            let buttons = document.getElementsByClassName("nav-button");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            if (button != null) {
+                button.classList.add("active");
+            }
+            let title = page;
+            if (page == "dashboard") {
+                title = "Dashboard";
+            } else if (page == "teams") {
+                title = "Manage Teams";
+            } else if (page == "players") {
+                title = "Manage Players";
+            } else if (page == "sports") {
+                title = "Sports Categories";
+            } else if (page == "schedules") {
+                title = "Manage Schedules";
+            } else if (page == "scores") {
+                title = "Manage Scores";
+            } else if (page == "standings") {
+                title = "Manage Standings";
+            } else if (page == "results") {
+                title = "Tournament Results";
+            }
+            document.getElementById("pageTitle").textContent = title;
+        }
+        function openModule(module) {
+            let buttons = document.getElementsByClassName("nav-button");
+            for (let i = 0; i < buttons.length; i++) {
+                if (buttons[i].getAttribute("onclick").includes("'" + module + "'")) {
+                    showPage(module, buttons[i]);
+                    return;
+                }
+            }
+        }
+        loadData();
+        displayTeams();
+        displayPlayers();
+        displaySports();
+    </script>
+</body>
+</html>
